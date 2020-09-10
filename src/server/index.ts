@@ -4,8 +4,12 @@ const Router = require("@koa/router");
 
 const port = 3001;
 
-const server = new Koa();
+const app = new Koa();
 const router = new Router();
+const server = require("http").createServer(app.callback());
+const io = require("socket.io")(server);
+
+io.on("connection", (socket: any): void => console.log(socket));
 
 router.get(
   "/hello-world",
@@ -17,7 +21,7 @@ router.get(
   }
 );
 
-server.use(router.routes());
+app.use(router.routes());
 server.listen(port, () => {
   console.log(`> Ready on http://localhost:${port}`);
 });
