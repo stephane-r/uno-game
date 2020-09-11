@@ -1,10 +1,45 @@
-import Link from "next/link";
-import io from "socket.io-client";
+import useSocket from '../hooks/useSocket';
+import { useState } from 'react';
 
-const socket = io("http://localhost:3001");
+const Home: React.FC = () => {
+  const [room, setRoom] = useState('');
+  const [username, setUsername] = useState('');
+  const {
+    isConnected,
+    connectToSocketServer,
+    disconnectFromSocketServer,
+  } = useSocket();
 
-socket.on("connect", () => console.log("connected"));
-
-const Home: React.FC = () => <h1>Hello World</h1>;
+  return (
+    <div>
+      {isConnected ? (
+        <span style={{ color: 'green' }}>Connected</span>
+      ) : (
+        <span style={{ color: 'red' }}>Not connected</span>
+      )}
+      <div>
+        <input type="text" onChange={(event) => setRoom(event.target.value)} />
+        <input
+          type="text"
+          onChange={(event) => setUsername(event.target.value)}
+        />
+        <button
+          type="button"
+          disabled={room === '' || username === ''}
+          onClick={() => connectToSocketServer(room, username)}
+        >
+          Join
+        </button>
+      </div>
+      {isConnected && (
+        <div>
+          <button type="button" onClick={disconnectFromSocketServer}>
+            Leave
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default Home;
