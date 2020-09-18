@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
-import { useUsers, addUser, removeUser } from "../states/users";
+import { useUsers, removeUser, setUsers } from "../states/users";
 
 const useSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -19,8 +19,8 @@ const useSocket = () => {
       }
     });
 
-    socketIo.on("joined", (user: any): void => {
-      addUser(user);
+    socketIo.on("joined", (users: any[]): void => {
+      setUsers(users);
     });
 
     socketIo.on("leaved", (userId: string): void => {
